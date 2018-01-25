@@ -1,0 +1,17 @@
+#!/usr/bin/bash
+make -s 
+dusty77;dusty77;dusty77
+make -s clean
+make -s size=75
+dusty77;dusty77;dusty77
+make -s clean
+make -s size=100
+dusty77;dusty77;dusty77
+make -s clean
+make -s size=125
+dusty77;dusty77;dusty77
+make -s clean
+make -s size=150
+dusty77;dusty77;dusty77
+make -s clean
+
