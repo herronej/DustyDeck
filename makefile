@@ -17,8 +17,8 @@ F77 = gfortran
 F90 = gfortran
 CC  = gcc 
 TIMINGLIB_FLAGS = -O3
-OPT_FLAGS = -O0 
-DEF_FLAGS = -DDO_TIMING 
+OPT_FLAGS = -O1
+DEF_FLAGS = -DOPT #-DDO_TIMING 
 
 TIMINGLIBS =  -L./ -llbstime 
 CLIBS = -lm
@@ -26,7 +26,7 @@ CLIBS = -lm
 OBJS = cputime.o walltime.o  
 
 ifeq ($(origin size), undefined)
-	PROFLAGS = -D CPPFLAGS=20 
+	PROFLAGS = -D CPPFLAGS=25
 else
 	PROFLAGS = -D CPPFLAGS=$(size)
 endif

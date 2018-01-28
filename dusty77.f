@@ -44,6 +44,29 @@
 
 * Loop 10 Series -- Filling Arrays
 
+#ifdef OPT
+
+      ! removed double casts
+      do 10 i = 1, N
+        AV(i) = bessel_jn(0,1.0*((conrand(seed) *
+     +               (-1)**(mod(int(10*conrand(seed)),N)))))
+10    continue
+
+      do 11 i = 1, N
+        BV(i) = bessel_jn(1,1.0*((conrand(seed) *
+     +               (-1)**(mod(int(10*conrand(seed)),N)))))
+11    continue
+
+      check = 0.0
+      do 12 i = 1, N
+        ! removed unnessary ival variable
+        !ival = N
+        check = check + AV(i) * BV(i)
+        call idcheck(N,check,AV,BV,ID)
+12    continue
+
+
+#else
       do 10 i = 1, N
         AV(i) = bessel_jn(0,dble((conrand(seed) *
      +               (-1)**(mod(int(10*conrand(seed)),N)))))
@@ -60,7 +83,7 @@
         check = check + AV(i) * BV(i)
         call idcheck(ival,check,AV,BV,ID)
 12    continue  
-
+#endif 
 * Compute |AV><BV|
 
       do 13 i = 1, N
