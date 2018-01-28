@@ -98,11 +98,21 @@
         IA(I) = i
 13    continue
 
+
+#ifdef OPT
+      do 15 i = 1, N
+        do 16 j = 0, i, 8
+             IA(I) = mod(i+j,N)+1
+16      continue
+15    continue
+
+#else
       do 15 i = 1, N 
         do 16 j = 0, i, 8  
              IA(I) = mod(mod(i+j,N),N)+1 
 16      continue
 15    continue
+#endif
 
 * Loop 20 
 
