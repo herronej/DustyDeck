@@ -17,7 +17,7 @@ F77 = gfortran
 F90 = gfortran
 CC  = gcc 
 TIMINGLIB_FLAGS = -O3
-OPT_FLAGS = -O0  -fcombine-stack-adjustments -fipa-reference -fshrink-wrap -fssa-backprop -ftree-coalesce-vars -ftree-copy-prop #-DOPT1 -DOPT2 -DOPT3 -DOPT4 -DOPT5 -DOPT6 -fcompare-elim -fipa-pure-const -fsplit-wide-types -ftree-ccp -ftree-ch #-ftree-dce -ftree-dominator-opts -ftree-dse -ftree-forwprop -ftree-fre -ftree-phiprop#-fssa-phiopt -ftree-bit-ccp -ftree-ccp -ftree-ch -ftree-coalesce-vars -ftree-copy-prop#-fmove-loop-invariants -freorder-blocks -fshrink-wrap -fsplit-wide-types -fssa-backprop #-fipa-pure-const -fipa-profile -fipa-reference 
+OPT_FLAGS = -fauto-inc-dec -fbranch-count-reg -fcombine-stack-adjustments -fcompare-elim -fcprop-registers -fdce -fdefer-pop  -fdse -fforward-propagate -fguess-branch-probability -fif-conversion2 -fif-conversion -finline-functions-called-once -fipa-pure-const -fipa-profile -fipa-reference -fmerge-constants -fmove-loop-invariants -freorder-blocks -fshrink-wrap -fsplit-wide-types -fssa-backprop -fssa-phiopt -ftree-bit-ccp -ftree-ccp -ftree-ch -ftree-coalesce-vars -ftree-copy-prop -ftree-sink -ftree-slsr -ftree-sra -ftree-pta /*-ftree-ter*/ -funit-at-a-time#-ftree-dce -ftree-dominator-opts -ftree-dse -ftree-forwprop -ftree-fre -ftree-phiprop#-fssa-phiopt -ftree-bit-ccp -ftree-ccp -ftree-ch -ftree-coalesce-vars -ftree-copy-prop#-fmove-loop-invariants -freorder-blocks -fshrink-wrap -fsplit-wide-types -fssa-backprop #-fipa-pure-const -fipa-profile -fipa-reference 
  #-O1 -fstrict-aliasing   # -00 -fmove-loop-invariants -finline-functions-called-once
 DEF_FLAGS = #-DOPT #-DDO_TIMING 
 
@@ -27,7 +27,7 @@ CLIBS = -lm
 OBJS = cputime.o walltime.o  
 
 ifeq ($(origin size), undefined)
-	PROFLAGS = -D CPPFLAGS=50
+	PROFLAGS = -D CPPFLAGS=25
 else
 	PROFLAGS = -D CPPFLAGS=$(size)
 endif

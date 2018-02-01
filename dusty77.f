@@ -44,7 +44,7 @@
 
 * Loop 10 Series -- Filling Arrays
 
-#ifdef OPT
+#ifdef OPT1
 
       ! removed double casts
       do 10 i = 1, N
@@ -86,10 +86,28 @@
 #endif 
 * Compute |AV><BV|
 
+#ifdef OPT2
+
+      do 13 i = 1, N
+        do 14 j = 1, N
+          call idcheck(N,check,AV,BV,ID)
+          select case(check .gt. 0.5)
+            case (.True.)
+             OP(i,j) = AV(i) * BV(j) / BV(i)
+            case default
+             OP(i,j) = AV(j) * BV(i) / BV(j)
+          end select
+14      continue
+        IA(I) = i
+13    continue
+
+
+#else
       do 13 i = 1, N
         do 14 j = 1, N
           call idcheck(N,check,AV,BV,ID)
           if ( check .gt. 0.5 ) then
+             !print*, check .gt. 0.5
              OP(i,j) = AV(i) * BV(j) / BV(i)
           else
              OP(i,j) = AV(j) * BV(i) / BV(j)
@@ -97,9 +115,13 @@
 14      continue
         IA(I) = i
 13    continue
+#endif
 
 
-#ifdef OPT
+
+#ifdef OPT3
+
+       ! removed second modulus operator
       do 15 i = 1, N
         do 16 j = 0, i, 8
              IA(I) = mod(i+j,N)+1
@@ -157,7 +179,23 @@
 
 
 * Loop 50
+#ifdef OPT4
 
+        ! switched to case statements
+      do 50 i = 1, N
+         do 52  j = 1, N
+            CM(i,j) = 0.0
+            do 55 k = 1, N
+               select case (i .ge. j)
+               case (.True.)
+                  CM(i,j) = CM(i,j) + AM(i,k) * BM(k,j) / check
+               case default
+                  CM(i,j) = CM(i,j) - AM(i,k) * BM(k,j) / check
+               end select
+55          continue
+52       continue
+50    continue
+#else
       do 50 i = 1, N
          do 52  j = 1, N
             CM(i,j) = 0.0
@@ -170,7 +208,7 @@
 55          continue
 52       continue
 50    continue
-
+#endif
 
 * Loop 60
 
@@ -252,6 +290,30 @@
       double precision check, check2
       double precision a, b, c, d 
 
+#ifdef OPT5
+
+        ! reordered if else statements
+
+      do 10 i = 1, N
+        do 20 j = 1, N
+          if ( i .eq. j ) then
+             if (( AV(i) .gt. 0 ) .and. ( BV(j) .lt. 0 )) then
+               ID(i,j) = -1.0
+             elseif (( AV(i) .gt. 0 ) .and. ( BV(j) .gt. 0 )) then
+               ID(i,j) = 1.0
+             elseif (( AV(i) .lt. 0 ) .and. ( BV(j) .lt. 0 )) then
+               ID(i,j) = 1.0
+             else
+               ID(i,j) = -1.0
+             endif
+          elseif ( i .ne. j ) then
+             ID(i,j) =  cos(check+2.0*i*acos(-1.0)/N)+
+     C                  2.0*sin(check+ 2.0*j*acos(-1.0)/N)
+          endif
+20      continue
+10    continue
+
+#else
       do 10 i = 1, N  
         do 20 j = 1, N
           if ( i .eq. j ) then 
@@ -270,6 +332,7 @@
           endif
 20      continue
 10    continue
+#endif
 
       l2 = 0.0
       do 30 i = 1, N
@@ -294,9 +357,38 @@
       b = 0.0D0
       c = 0.0D0
       d = 0.0D0
+
+#ifdef OPT6
+
+      ! switched from go to to select cases
+
       do 70 i = 1, N
         do 80 j = 1, N
            do 90 k = 1, N
+               ! removed int cast
+               select case((mod(i+j+k,4)+1))
+                case (1)
+                    a  = a +  AV(i) * BV(j) * ID(j,k)
+                    check = check + a
+                case (2)
+                    b  = b +  AV(j) * BV(i) * ID(k,j)
+                    check = check - b
+                case (3)
+                    c  = c -  AV(i) * BV(j) * ID(k,j)
+                    check = sqrt(b**2 + c**2)
+                case (4)
+                    d  = d -  AV(j) * BV(i) * ID(j,k)
+                    check2 = a + b + c + d
+                end select
+90         continue
+80      continue
+70    continue
+
+#else
+      do 70 i = 1, N
+        do 80 j = 1, N
+           do 90 k = 1, N
+               !print*, int(mod(i+j+k,4)+1)
                goto ( 200, 300, 400, 500 ) int(mod(i+j+k,4)+1) 
 200            a  = a +  AV(i) * BV(j) * ID(j,k) 
                check = check + a
@@ -313,6 +405,7 @@
 90         continue
 80      continue
 70    continue
+#endif
 
       check = min(abs(check2),abs(check))/max(abs(check2),abs(check))           
 
