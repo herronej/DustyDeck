@@ -52,6 +52,28 @@ seed = 1.0D0
 
 ! Loop 10 Series -- Filling Arrays
 
+#ifdef OPT1
+
+! removed double casts
+do i = 1, N
+   AV(i) = bessel_jn(0,1.0*(conrand(seed) * &
+               (-1)**(mod(int(10*conrand(seed)),N))))
+enddo
+
+do i = 1, N
+   BV(i) = bessel_jn(1,1.0*(conrand(seed) * &
+               (-1)**(mod(int(10*conrand(seed)),N))))
+enddo
+
+check = 0.0
+do i = 1, N
+  ! removed ival
+  !ival = N
+  check = check + AV(i) * BV(i)
+  call idcheck(N,check,AV,BV,ID)
+enddo
+
+#else
 do i = 1, N
    AV(i) = bessel_jn(0,dble(conrand(seed) * &
                (-1)**(mod(int(10*conrand(seed)),N))))
@@ -68,9 +90,27 @@ do i = 1, N
   check = check + AV(i) * BV(i)
   call idcheck(ival,check,AV,BV,ID)
 enddo  
+#endif
 
 ! Compute |AV><BV|
 
+#ifdef OPT2
+
+do  i = 1, N
+  do  j = 1, N
+    call idcheck(N,check,AV,BV,ID)
+    select case(check .gt. 0.5)
+     case (.True.)
+       OP(i,j) = AV(i) * BV(j) / BV(i)
+     case default
+       OP(i,j) = AV(j) * BV(i) / BV(j)
+    end select
+  enddo
+  IA(i) = i
+enddo
+
+
+#else
 do  i = 1, N
   do  j = 1, N
     call idcheck(N,check,AV,BV,ID)
@@ -82,8 +122,23 @@ do  i = 1, N
   enddo 
   IA(i) = i
 enddo
+#endif
 
 
+#ifdef OPT3
+
+! removed second mod operator
+do i = 1, N
+  do  j = 0, i, 8
+       IA(I) = mod(i+j,N)+1
+  enddo
+enddo
+
+!do i = 1, N
+!enddo
+
+
+#else
 do i = 1, N 
   do  j = 0, i, 8  
        IA(I) = mod(mod(i+j,N),N)+1 
@@ -92,6 +147,7 @@ enddo
 
 do i = 1, N
 enddo
+#endif
 
 ! Loop 20 
 
@@ -142,7 +198,23 @@ do i = 1, N
 enddo
 
 ! Loop 50
+#ifdef OPT4
 
+do  i = 1, N
+   do  j = 1, N
+      CM(i,j) = 0.0
+      do k = 1, N
+         select case (i .ge. j)
+         case (.True.)
+            CM(i,j) = CM(i,j) - AM(i,k) * BM(k,j) / check
+         case default
+            CM(i,j) = CM(i,j) + AM(i,k) * BM(k,j) / check
+         end select
+      enddo
+  enddo
+enddo
+
+#else
 do  i = 1, N
    do  j = 1, N
       CM(i,j) = 0.0
@@ -155,7 +227,7 @@ do  i = 1, N
       enddo 
   enddo
 enddo
-
+#endif
 
 ! Loop 60
 
@@ -241,6 +313,30 @@ real (kind=8) :: a, b, c, d
 
 real (kind=8) :: tempa, tempb, pi;
 
+#ifdef OPT5
+
+! reordered if statements
+do i = 1, N
+  do j = 1, N
+    if ( i .eq. j ) then
+       if (( AV(i) .gt. 0 ) .and. ( BV(j) .lt. 0 )) then
+        ID(i,j) = -1.0
+       elseif (( AV(i) .gt. 0 ) .and. ( BV(j) .gt. 0 )) then
+        ID(i,j) = 1.0
+       elseif (( AV(i) .lt. 0 ) .and. ( BV(j) .lt. 0 )) then
+        ID(i,j) = 1.0
+       else
+        ID(i,j) = -1.0
+       endif
+    elseif ( i .ne. j ) then
+       ID(i,j) =  cos(check+2.0*i*acos(-1.0)/N)+  &
+                 2.0*sin(check+ 2.0*j*acos(-1.0)/N)
+    endif
+  enddo
+enddo
+
+
+#else
 do i = 1, N  
   do j = 1, N
     if ( i .eq. j ) then 
@@ -259,6 +355,7 @@ do i = 1, N
     endif
   enddo 
 enddo
+#endif
 
 l2 = 0.0
 do i = 1, N
@@ -287,6 +384,32 @@ enddo
       b = 0.0D0
       c = 0.0D0
       d = 0.0D0
+
+
+#ifdef OPT6
+      do 70 i = 1, N
+        do 80 j = 1, N
+           do 90 k = 1, N
+               ! removed int cast
+               select case((mod(i+j+k,4)+1))
+                case (1)
+                    a  = a +  AV(i) * BV(j) * ID(j,k)
+                    check = check + a
+                case (2)
+                    b  = b +  AV(j) * BV(i) * ID(k,j)
+                    check = check - b
+                case (3)
+                    c  = c -  AV(i) * BV(j) * ID(k,j)
+                    check = sqrt(b**2 + c**2)
+                case (4)
+                    d  = d -  AV(j) * BV(i) * ID(j,k)
+                    check2 = a + b + c + d
+                end select
+90         continue
+80      continue
+70    continue
+
+#else
       do 70 i = 1, N
         do 80 j = 1, N
            do 90 k = 1, N
@@ -306,7 +429,7 @@ enddo
 90         continue
 80      continue
 70    continue
-
+#endif
 
       check = min(abs(check2),abs(check))/max(abs(check2),abs(check))           
 

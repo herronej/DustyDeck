@@ -17,9 +17,9 @@ F77 = gfortran
 F90 = gfortran
 CC  = gcc 
 TIMINGLIB_FLAGS = -O3
-OPT_FLAGS = -O0  -fcombine-stack-adjustments -fipa-reference -fshrink-wrap -fssa-backprop -ftree-coalesce-vars -ftree-copy-prop #-DOPT1 -DOPT2 -DOPT3 -DOPT4 -DOPT5 -DOPT6 -fcompare-elim -fipa-pure-const -fsplit-wide-types -ftree-ccp -ftree-ch #-ftree-dce -ftree-dominator-opts -ftree-dse -ftree-forwprop -ftree-fre -ftree-phiprop#-fssa-phiopt -ftree-bit-ccp -ftree-ccp -ftree-ch -ftree-coalesce-vars -ftree-copy-prop#-fmove-loop-invariants -freorder-blocks -fshrink-wrap -fsplit-wide-types -fssa-backprop #-fipa-pure-const -fipa-profile -fipa-reference 
+OPT_FLAGS = #-O0  -fcombine-stack-adjustments -fipa-reference -fshrink-wrap -fssa-backprop -ftree-coalesce-vars -ftree-copy-prop#-O0 -DOPT1 -DOPT2 -DOPT3 -DOPT4 -DOPT5 -DOPT6 -fcompare-elim -fipa-pure-const -fsplit-wide-types -ftree-ccp -ftree-ch#-O0  -fcombine-stack-adjustments -fipa-reference -fshrink-wrap -fssa-backprop -ftree-coalesce-vars -ftree-copy-prop #-DOPT1 -DOPT2 -DOPT3 -DOPT4 -DOPT5 -DOPT6 -fcompare-elim -fipa-pure-const -fsplit-wide-types -ftree-ccp -ftree-ch #-ftree-dce -ftree-dominator-opts -ftree-dse -ftree-forwprop -ftree-fre -ftree-phiprop#-fssa-phiopt -ftree-bit-ccp -ftree-ccp -ftree-ch -ftree-coalesce-vars -ftree-copy-prop#-fmove-loop-invariants -freorder-blocks -fshrink-wrap -fsplit-wide-types -fssa-backprop #-fipa-pure-const -fipa-profile -fipa-reference 
  #-O1 -fstrict-aliasing   # -00 -fmove-loop-invariants -finline-functions-called-once
-DEF_FLAGS = #-DOPT #-DDO_TIMING 
+DEF_FLAGS = -DDO_TIMING #-DOPT #-DDO_TIMING 
 
 TIMINGLIBS =  -L./ -llbstime 
 CLIBS = -lm
@@ -27,7 +27,7 @@ CLIBS = -lm
 OBJS = cputime.o walltime.o  
 
 ifeq ($(origin size), undefined)
-	PROFLAGS = -D CPPFLAGS=50
+	PROFLAGS = -D CPPFLAGS=200
 else
 	PROFLAGS = -D CPPFLAGS=$(size)
 endif
@@ -78,3 +78,17 @@ ctags :
 lib: $(OBJS) 
 	ar -rc liblbstime.a $(OBJS) 
 	ranlib liblbstime.a
+
+run :
+	dusty77 | tee testdata.dat
+	dusty77 | tee -a testdata.dat
+	dusty77 | tee -a testdata.dat
+	dusty77 | tee -a testdata.dat
+	dusty77 | tee -a testdata.dat
+
+average :
+	echo "mydata = read.table(\"testdata.dat\", header=FALSE)" >mean.R
+	echo "mean(mydata[[\"V2\"]])" >>mean.R
+	R -q --vanilla -f mean.R
+	rm mean.R
+

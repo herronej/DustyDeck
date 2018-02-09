@@ -62,7 +62,28 @@ int main(){
     //     Fill arrays
 
     // Loop 10 Series -- Filling Arrays
+#ifdef OPT1
 
+    // removed double casts
+
+    for ( i = 0; i<N; i++) {
+        *(AV+i) = jn(0,  conrand(&seed) *
+                pow( -1.0, (int) (10*conrand(&seed)) % N ) );
+    }
+
+    for ( i = 0; i<N; i++) {
+        *(BV+i) = jn(1,  conrand(&seed) *
+                pow( -1.0, (int) (10*conrand(&seed)) % N ) );
+    }
+
+    check = 0.0;
+    for (i=0; i<N; i++){
+        check = check + *(AV+i) * *(BV+i);
+        idcheck(N,&check,AV,BV,ID);
+    }
+
+
+#else
     for ( i = 0; i<N; i++) {
         *(AV+i) = jn(0, (double) conrand(&seed) * 
                 pow( -1.0, (int) (10*conrand(&seed)) % N ) );
@@ -78,10 +99,29 @@ int main(){
         check = check + *(AV+i) * *(BV+i);
         idcheck(N,&check,AV,BV,ID);
     }  
-
+#endif
 
     // Compute |AV><BV|
 
+#ifdef OPT2
+
+    for ( i = 0; i<N; i++) {
+        for (j=0; j<N; j++ ){
+            idcheck(N,&check,AV,BV,ID);
+            switch (check > 0.5){
+                case true:
+                    *(OP+(i*N+j)) = *(AV+i) * *(BV+j) / *(BV+i);
+                
+                default:
+                    *(OP+(i*N+j)) = *(AV+j) * *(BV+i) / *(BV+j);
+                
+            }
+        }
+        *(IA+i) = i+1;
+    }
+
+
+#else
     for ( i = 0; i<N; i++) {
         for (j=0; j<N; j++ ){ 
             idcheck(N,&check,AV,BV,ID);
@@ -94,8 +134,18 @@ int main(){
         } 
         *(IA+i) = i+1;
     }
+#endif
 
 
+#ifdef OPT3
+
+    for (i=0;i<N;i++){
+        for ( j = -1; j<=i; j+=8){
+            *(IA+i) = ((i+1)+(j+1)) % N ;  ;
+        }
+    }
+
+#else
     for (i=0;i<N;i++){ 
         for ( j = -1; j<=i; j+=8){  
             *(IA+i) =  ( ((i+1)+(j+1)) % N) % N ;  ; 
@@ -104,6 +154,7 @@ int main(){
             // fortran 
         }
     } 
+#endif
 
     //! Loop 20 
 
@@ -154,6 +205,29 @@ int main(){
 
     //! Loop 50
 
+#ifdef OPT4
+
+    for (i=0; i<N; i++ ){
+        for (j=0; j<N; j++ ) {
+            *(CM+i*N+j) = 0.0;
+            for ( k = 0; k<N; k++ ){
+
+                switch(i < j){
+                    case true :
+                        *(CM+i*N+j) = *(CM+i*N+j) - *(AM+i*N+k) * *(BM+k*N+j) / check;
+                
+                    default: 
+                        *(CM+i*N+j) = *(CM+i*N+j) + *(AM+i*N+k) * *(BM+k*N+j) / check;
+                    
+
+                }
+            }
+        }
+    }
+
+
+
+#else
     for (i=0; i<N; i++ ){
         for (j=0; j<N; j++ ) { 
             *(CM+i*N+j) = 0.0;
@@ -167,7 +241,7 @@ int main(){
             }
         }
     }
-
+#endif
 
     // ! Loop 60
 
@@ -234,7 +308,12 @@ double trig ( int i, int j ){
 
     double x, y, z;
     float pi;
-    pi = (float) acos(-1.0);
+    #ifdef OPT6 
+        pi = 3.14159265359;
+    #else 
+        (float) acos(-1.0);
+    #endif
+
     x = (double) i - (double) j;
     y = (double) i + (double) j;
     // Had to CAREFULLY match results based on mixed precision arithmetic
@@ -253,7 +332,35 @@ void idcheck( int N, double *check, double *AV, double *BV, double *ID) {
 
     int i, j, k;
 
+#ifdef OPT5
 
+    for (i=0;i<N;i++){
+        for (j=0;j<N;j++){
+            if ( i == j ) {
+                if ( ( *(AV+i) > 0.0 ) && ( *(BV+j) < 0 )) {
+                    *(ID+(i*N)+j) = -1.0;
+                }
+                else if ( ( *(AV+i) > 0.0 ) && ( *(BV+j) > 0 )) {
+                    *(ID+(i*N)+j) = 1.0;
+                }
+                else if ( ( *(AV+i) < 0.0 ) && ( *(BV+j) < 0 )) {
+                    *(ID+(i*N)+j) = 1.0;
+                }
+                else {
+                    *(ID+(i*N)+j) = -1.0;
+                }
+            }
+            else {
+
+                *(ID+(i*N)+j) =   cos( *check+ 2*(i+1)* acosf(-1.0)/N) +
+                    2.0* sin( *check+ 2*(j+1)* acosf(-1.0)/N);
+
+            }
+        }
+    }
+
+
+#else
     for (i=0;i<N;i++){
         for (j=0;j<N;j++){
             if ( i == j ) { 
@@ -278,7 +385,7 @@ void idcheck( int N, double *check, double *AV, double *BV, double *ID) {
             }
         }
     } 
-
+#endif
 
     l2 = 0.0;
     for ( i=0; i<N; i++)
