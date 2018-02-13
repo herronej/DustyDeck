@@ -17,9 +17,9 @@ F77 = gfortran
 F90 = gfortran
 CC  = gcc 
 TIMINGLIB_FLAGS = -O3
-OPT_FLAGS = -fcompare-elim -fipa-pure-const -fsplit-wide-types -ftree-ccp -ftree-ch -DOPT1 -DOPT2 -DOPT3 -DOPT4 -DOPT5 -DOPT6 -fcombine-stack-adjustments -fipa-reference -fshrink-wrap -fssa-backprop -ftree-coalesce-vars -ftree-copy-prop#-fcombine-stack-adjustments -fipa-reference -fshrink-wrap -fssa-backprop -ftree-coalesce-vars -ftree-copy-prop#-O0 -DOPT1 -DOPT2 -DOPT3 -DOPT4 -DOPT5 -DOPT6 -fcompare-elim -fipa-pure-const -fsplit-wide-types -ftree-ccp -ftree-ch#-O0  -fcombine-stack-adjustments -fipa-reference -fshrink-wrap -fssa-backprop -ftree-coalesce-vars -ftree-copy-prop #-DOPT1 -DOPT2 -DOPT3 -DOPT4 -DOPT5 -DOPT6 -fcompare-elim -fipa-pure-const -fsplit-wide-types -ftree-ccp -ftree-ch #-ftree-dce -ftree-dominator-opts -ftree-dse -ftree-forwprop -ftree-fre -ftree-phiprop#-fssa-phiopt -ftree-bit-ccp -ftree-ccp -ftree-ch -ftree-coalesce-vars -ftree-copy-prop#-fmove-loop-invariants -freorder-blocks -fshrink-wrap -fsplit-wide-types -fssa-backprop #-fipa-pure-const -fipa-profile -fipa-reference 
- #-O1 -fstrict-aliasing   # -00 -fmove-loop-invariants -finline-functions-called-once
-DEF_FLAGS = -DDO_TIMING #-DOPT #-DDO_TIMING 
+OPT_FLAGS = -fcompare-elim -fipa-pure-const -fsplit-wide-types -ftree-ccp -ftree-ch -DOPT1 -DOPT2 -DOPT3 -DOPT4 -DOPT5 -DOPT6 -fcombine-stack-adjustments -fipa-reference -fshrink-wrap -fssa-backprop -ftree-coalesce-vars -ftree-copy-prop
+
+DEF_FLAGS = -DDO_TIMING
 
 TIMINGLIBS =  -L./ -llbstime 
 CLIBS = -lm
