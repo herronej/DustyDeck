@@ -109,7 +109,7 @@ int main(){
         for (j=0; j<N; j++ ){
             idcheck(N,&check,AV,BV,ID);
             switch (check > 0.5){
-                case true:
+                case 1:
                     *(OP+(i*N+j)) = *(AV+i) * *(BV+j) / *(BV+i);
                 
                 default:
@@ -213,7 +213,7 @@ int main(){
             for ( k = 0; k<N; k++ ){
 
                 switch(i < j){
-                    case true :
+                    case 1 :
                         *(CM+i*N+j) = *(CM+i*N+j) - *(AM+i*N+k) * *(BM+k*N+j) / check;
                 
                     default: 
