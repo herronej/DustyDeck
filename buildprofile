@@ -1,0 +1,32 @@
+#!/bin/bash
+make -s 
+./dusty
+make -s clean
+make -s size=20
+./dusty
+make -s clean
+make -s size=30
+./dusty
+make -s clean
+make -s size=40
+./dusty
+make -s clean
+make -s size=50
+./dusty
+make -s clean
+make -s size=60
+./dusty
+make -s clean
+make -s size=70
+./dusty
+make -s clean
+make -s size=80
+./dusty
+make -s clean
+make -s size=90
+./dusty
+make -s clean
+make -s size=100
+./dusty
+make -s clean
+
