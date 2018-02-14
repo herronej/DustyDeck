@@ -88,6 +88,8 @@
 
 #ifdef OPT2
 
+
+! replaced if else with case statements
       do 13 i = 1, N
         do 14 j = 1, N
           call idcheck(N,check,AV,BV,ID)

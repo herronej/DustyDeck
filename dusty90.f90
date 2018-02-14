@@ -96,6 +96,8 @@ enddo
 
 #ifdef OPT2
 
+! replaced if else with case statements
+
 do  i = 1, N
   do  j = 1, N
     call idcheck(N,check,AV,BV,ID)
@@ -199,6 +201,8 @@ enddo
 
 ! Loop 50
 #ifdef OPT4
+
+! replaced if else with case statements
 
 do  i = 1, N
    do  j = 1, N
@@ -387,6 +391,8 @@ enddo
 
 
 #ifdef OPT6
+
+! replaced gotos with select cases
       do 70 i = 1, N
         do 80 j = 1, N
            do 90 k = 1, N

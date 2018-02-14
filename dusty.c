@@ -105,6 +105,8 @@ int main(){
 
 #ifdef OPT2
 
+    // replaced if else with switch statement
+
     for ( i = 0; i<N; i++) {
         for (j=0; j<N; j++ ){
             idcheck(N,&check,AV,BV,ID);
@@ -138,6 +140,8 @@ int main(){
 
 
 #ifdef OPT3
+
+    // removed second mod operator
 
     for (i=0;i<N;i++){
         for ( j = -1; j<=i; j+=8){
@@ -206,6 +210,8 @@ int main(){
     //! Loop 50
 
 #ifdef OPT4
+
+    // replaced if else with switch statements
 
     for (i=0; i<N; i++ ){
         for (j=0; j<N; j++ ) {
@@ -333,6 +339,8 @@ void idcheck( int N, double *check, double *AV, double *BV, double *ID) {
     int i, j, k;
 
 #ifdef OPT5
+
+    // reordered if else statement
 
     for (i=0;i<N;i++){
         for (j=0;j<N;j++){
